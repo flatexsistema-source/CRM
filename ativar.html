@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ativar minha conta</title>
+<link rel="icon" href="logo.svg" type="image/svg+xml">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Figtree:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#0d2b33;--pet:#0a8ea0;--sun:#ffc933;--foam:#eef6f7;--line:#cfe0e3;--mut:#4d6870}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:grid;place-items:center;padding:22px;background:var(--foam);font:17px/1.55 Figtree,system-ui,sans-serif;color:var(--ink)}
+.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:34px;width:100%;max-width:460px;box-shadow:0 24px 60px -28px #0d2b3366}
+.brand{display:flex;align-items:center;gap:10px;font:800 1.2rem 'Bricolage Grotesque',sans-serif;margin-bottom:22px}.brand img{width:36px;height:36px}
+h1{font:800 1.9rem/1.1 'Bricolage Grotesque',sans-serif;margin:0 0 8px;letter-spacing:-.02em}
+p{margin:0;color:var(--mut)}
+label{display:block;margin:16px 0 6px;font-weight:600;font-size:.94rem}
+input{width:100%;padding:13px;border:1.5px solid var(--line);border-radius:10px;font:inherit;color:var(--ink)}
+input:focus-visible{outline:3px solid var(--sun);outline-offset:1px}
+#pin{font:800 1.5rem 'Bricolage Grotesque',monospace;letter-spacing:.25em;text-align:center;text-transform:uppercase}
+.pw{position:relative}.pw button{position:absolute;right:6px;top:6px;border:0;background:none;padding:8px;cursor:pointer;color:var(--mut);font-size:.85rem}
+.btn{width:100%;margin-top:22px;border:0;border-radius:10px;padding:14px;background:var(--pet);color:#fff;font:600 1rem Figtree,sans-serif;cursor:pointer}
+.btn:disabled{opacity:.6;cursor:wait}
+#msg{min-height:1.4em;margin-top:14px;font-size:.95rem}
+.ok{background:#e8f6ee;border-radius:10px;padding:14px;color:#14663f;margin-top:16px}
+a{color:var(--pet)}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="brand"><img src="logo.svg" alt=""><span id="marca">CRM</span></div>
+  <div id="form">
+    <h1>Ative sua conta</h1>
+    <p>Digite o PIN que enviamos para o seu e-mail depois do pagamento e crie sua senha. O espaço da sua empresa é criado na hora, vazio e só seu.</p>
+    <label for="email">E-mail usado na compra</label>
+    <input id="email" type="email" autocomplete="email" inputmode="email">
+    <label for="pin">PIN de ativação</label>
+    <input id="pin" maxlength="9" placeholder="XXXX-XXXX" autocomplete="off">
+    <label for="nome">Nome da sua empresa</label>
+    <input id="nome" autocomplete="organization">
+    <label for="senha">Crie uma senha (mínimo 8 caracteres)</label>
+    <div class="pw"><input id="senha" type="password" autocomplete="new-password"><button type="button" id="eye">Mostrar</button></div>
+    <div id="msg" role="status"></div>
+    <button class="btn" id="go">Ativar e criar minha conta</button>
+  </div>
+  <div id="done" hidden>
+    <h1>Conta criada!</h1>
+    <div class="ok">Tudo pronto. Entre com o seu e-mail e a senha que você acabou de criar.</div>
+    <a class="btn" style="display:block;text-align:center;text-decoration:none;color:#fff" href="crm.html">Entrar no sistema</a>
+  </div>
+  <p style="margin-top:22px;font-size:.88rem"><span id="dev"></span></p>
+</div>
+<script src="config.js"></script>
+<script>
+const C=window.CRM_CONFIG||{},$=s=>document.querySelector(s),q=new URLSearchParams(location.search);
+$('#marca').textContent=C.MARCA||'CRM';document.title='Ativar conta — '+(C.MARCA||'CRM');
+$('#dev').textContent=C.DESENVOLVEDOR?'Desenvolvido por '+C.DESENVOLVEDOR:'';
+if(q.get('email'))$('#email').value=q.get('email');
+if(q.get('pago')){$('#msg').style.color='#14663f';$('#msg').textContent='Pagamento recebido! Em instantes você recebe o PIN por e-mail.'}
+$('#eye').onclick=()=>{const s=$('#senha');s.type=s.type=='password'?'text':'password';$('#eye').textContent=s.type=='password'?'Mostrar':'Ocultar'};
+$('#go').onclick=async()=>{const b=$('#go');b.disabled=true;$('#msg').style.color='#4d6870';$('#msg').textContent='Ativando…';
+  try{const r=await fetch('/.netlify/functions/ativar',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:$('#email').value,pin:$('#pin').value,nome_empresa:$('#nome').value,senha:$('#senha').value})});
+    const j=await r.json();if(j.ok){$('#form').hidden=true;$('#done').hidden=false}else throw j.err}
+  catch(x){$('#msg').style.color='#c8382b';$('#msg').textContent=typeof x=='string'?x:'Não foi possível ativar agora. Tente de novo.';b.disabled=false}};
+</script>
+</body>
+</html>

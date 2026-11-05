@@ -1,0 +1,100 @@
+CRM SaaS - COMO COLOCAR NO AR (passo a passo, sem programar)
+
+O QUE TEM NESTA PASTA
+  index.html   Página de vendas (planos, WhatsApp flutuante, compra por e-mail)
+  crm.html     O sistema (login) .......... crm.html?demo=1 = TESTE GRÁTIS para o cliente
+  ativar.html  Onde o cliente digita o PIN e cria a senha
+  config.js    Nome do CRM, WhatsApp, chaves do Supabase  (edite no BLOCO DE NOTAS)
+  logo.svg     Marca do CRM (troque pela sua se quiser)
+  supabase.sql Estrutura do banco
+  netlify/     Funções seguras (pagamento, PIN, usuários)
+
+1) SUPABASE (banco de dados)
+   a. No seu projeto: SQL Editor > New query > cole o conteúdo de supabase.sql > Run.
+   b. Authentication > Users > Add user > Create new user: seu e-mail + senha, marque "Auto Confirm User".
+   c. Copie o "User UID" desse usuário. No FIM do supabase.sql está o bloco "SEU CADASTRO COMO DONO":
+      tire os "--" do começo das linhas, troque SEU@EMAIL.COM, COLE-AQUI-O-USER-UID e Seu Nome, e rode só esse bloco.
+   d. Project Settings > API: copie "Project URL" e "anon public" para o config.js.
+      Copie também a "service_role" - ela é SECRETA: vai só no Netlify (passo 3), nunca no config.js.
+   e. Authentication > URL Configuration: em "Site URL" coloque o endereço do seu site no Netlify.
+
+2) NOME DO CRM
+   Abra config.js no Bloco de Notas e troque MARCA, SLOGAN e WHATSAPP_VENDAS.
+
+3) NETLIFY (site no ar)
+   Atenção: arrastar a pasta para o Netlify NÃO ativa as funções de pagamento. Use o GitHub:
+   a. Crie conta em github.com > New repository > "uploading an existing file" > envie TODOS os arquivos da pasta.
+   b. Netlify > Add new site > Import an existing project > GitHub > escolha o repositório > Deploy.
+   c. Site configuration > Environment variables, crie:
+        SUPABASE_URL          = Project URL
+        SUPABASE_SERVICE_KEY  = chave service_role
+        STRIPE_SECRET_KEY     = chave secreta do Stripe (sk_...)
+        STRIPE_WEBHOOK_SECRET = segredo do webhook (whsec_...)   [passo 4]
+        RESEND_API_KEY        = chave do Resend (envio de e-mails) [passo 5]
+        EMAIL_FROM            = Nome <contato@seudominio.com.br>
+        MARCA                 = nome do CRM
+        DESENVOLVEDOR         = Ph Flatex Do Brasil Ltda.
+        SITE_URL              = https://seu-site.netlify.app
+      Depois: Deploys > Trigger deploy.
+
+4) STRIPE (cobrança mensal no cartão)
+   a. Crie a conta em stripe.com e ative o modo de teste para começar.
+   b. Developers > API keys: copie a Secret key (STRIPE_SECRET_KEY).
+   c. Developers > Webhooks > Add endpoint:
+        URL: https://seu-site.netlify.app/.netlify/functions/webhook
+        Eventos: checkout.session.completed, invoice.payment_failed, invoice.paid, customer.subscription.deleted
+      Copie o "Signing secret" (STRIPE_WEBHOOK_SECRET).
+   d. Settings > Billing > Customer portal: ative (é o botão "Gerenciar pagamento" do cliente).
+   e. Teste com o cartão 4242 4242 4242 4242 (qualquer data futura e CVC).
+
+5) E-MAIL (PIN e link de pagamento)
+   Crie conta em resend.com, gere a API key e verifique o seu domínio para enviar de contato@seudominio.
+   (Sem domínio verificado o Resend só envia para o seu próprio e-mail - serve só para teste.)
+
+6) COMO FUNCIONA PARA O CLIENTE
+   Página de vendas > escolhe o plano > digita o e-mail > recebe o link e paga > recebe o PIN por e-mail >
+   ativar.html (PIN + nome da empresa + senha) > entra em crm.html com o espaço próprio, vazio.
+   Atraso de pagamento: o relógio de 15 dias começa na 1ª cobrança que falhar; passou disso, o acesso bloqueia
+   sozinho (dados preservados). Pagou, desbloqueia sozinho.
+
+7) O SEU PAINEL (aba "Desenvolvedor", só aparece para você)
+   Empresas clientes (bloquear, liberar, perdoar atraso, trocar plano), PLANOS (mudar preço, usuários, criar
+   novos), WhatsApp de suporte e de vendas, e NOVIDADES para todos os usuários. O limite de usuários de cada
+   plano é aplicado automaticamente quando o gestor do cliente cria usuários.
+
+8) LINK DE TESTE PARA O CLIENTE
+   https://seu-site.netlify.app/crm.html?demo=1  (dados de exemplo, ninguém precisa se cadastrar)
+
+LIMITAÇÃO CONHECIDA: a restrição "vendedor só vê as suas cidades" é aplicada na tela; o isolamento entre empresas e a
+privacidade dos pedidos de cada vendedor são garantidos pelo banco.
+
+
+=====================================================================
+NOVIDADES DESTA VERSÃO
+=====================================================================
+NOME E MARCA: o nome sugerido é "Prospera" (config.js, linha MARCA) e a marca nova está em logo.svg.
+   Antes de usar para valer, confira se o nome está livre no INPI (inpi.gov.br) e como domínio em registro.br.
+
+SE VOCÊ JÁ RODOU O supabase.sql ANTES: rode de novo (pode repetir sem problema) para ativar o aviso de lead na hora.
+
+LEAD QUE APARECE NA HORA (aviso sonoro + botão "Responder agora")
+   No sistema, aba "Captar clientes" > "Ativar captação de leads" gera o endereço secreto da empresa.
+   Cole esse endereço em: formulário do site, Linktree/bio, anúncios de Facebook/Instagram (Lead Ads) via Zapier ou Make,
+   ManyChat (captura quem chama no Direct do Instagram/Facebook) e WhatsApp com ManyChat.
+   Campos aceitos: empresa ou nome, telefone, email, cidade, canal, mensagem.
+
+BUSCAR CLIENTES NO GOOGLE MAPS (aba "Captar clientes", só gestor)
+   1. console.cloud.google.com > crie um projeto > ative a "Places API (New)" > crie uma chave de API.
+   2. No Netlify crie a variável GOOGLE_PLACES_KEY com essa chave e faça um novo deploy.
+   3. A busca é paga pelo Google e cobrada na SUA conta: ative alerta de orçamento. Máximo de 60 por busca.
+   Atenção: os termos do Google Maps restringem guardar e exportar os dados do Maps. Use por sua conta e risco
+   (consulte seu advogado) ou prefira importar listas de CNPJ pela Receita Federal em Prospecção > Importar CSV.
+   Não há captação em massa de Instagram/Facebook: é proibida pelas redes e a conta pode ser banida.
+
+MIGRAR DO SISTEMA LOCAL PARA A NUVEM
+   No sistema local: Personalizar > "Baixar backup". Na nuvem: Captar clientes > "Restaurar backup".
+
+ROTEIRO DO OPERADOR (jovem aprendiz)
+   Ao abrir um lead aparece o "PRÓXIMO PASSO": o que fazer, a mensagem pronta com nome do cliente, botão para abrir no
+   WhatsApp, roteiro de ligação, respostas prontas para objeções e o botão "Fiz este passo - avançar", que agenda o
+   retorno sozinho. O gestor edita os textos em Personalizar > "Roteiro do operador".
