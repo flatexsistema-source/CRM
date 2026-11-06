@@ -14,7 +14,7 @@ window.CRM_CONFIG = {
   DESENVOLVEDOR: 'Ph Flatex Do Brasil Ltda.',
 
   // ⚠️ DIGITE SEU WHATSAPP DE VENDAS AQUI (Apenas números com DDD, exemplo: '5519999999999')
-  WHATSAPP_VENDAS: '55',
+  WHATSAPP_VENDAS: '5519998804232',
 
   // Seus dados reais do Supabase já preenchidos de acordo com seu ID de projeto:
   SUPABASE_URL: 'https://supabase.co',
@@ -24,8 +24,8 @@ window.CRM_CONFIG = {
 
   // Planos mostrados enquanto o sistema ainda não está ligado ao Supabase.
   PLANOS_PADRAO: [
-    { nome: 'Essencial',    preco_centavos: 9700,  max_usuarios: 3,  descricao: 'Prospecção, follow-up e carteira;Meta diária por vendedor;Pedidos e comissão;Suporte por WhatsApp' },
-    { nome: 'Profissional', preco_centavos: 19700, max_usuarios: 10, destaque: true, descricao: 'Tudo do Essencial;Relatório de origem das oportunidades;Regiões e comissões por vendedor;Backup quando você quiser' },
-    { nome: 'Empresarial',  preco_centavos: 39700, max_usuarios: 30, descricao: 'Tudo do Profissional;Até 30 usuários;Atendimento prioritário;Treinamento da equipe' }
+    { nome: 'Essencial',    preco_centavos: 12700,  max_usuarios: 3,  descricao: 'Prospecção, follow-up e carteira;Meta diária por vendedor;Pedidos e comissão;Suporte por WhatsApp' },
+    { nome: 'Profissional', preco_centavos: 25700, max_usuarios: 10, destaque: true, descricao: 'Tudo do Essencial;Relatório de origem das oportunidades;Regiões e comissões por vendedor;Backup quando você quiser' },
+    { nome: 'Empresarial',  preco_centavos: 49700, max_usuarios: 30, descricao: 'Tudo do Profissional;Até 30 usuários;Atendimento prioritário;Treinamento da equipe' }
   ]
 };
