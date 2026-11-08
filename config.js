@@ -17,7 +17,7 @@ window.CRM_CONFIG = {
   WHATSAPP_VENDAS: '5519998804232',
 
   // Seus dados reais do Supabase já preenchidos de acordo com seu ID de projeto:
-  SUPABASE_URL: 'https://supabase.co',
+  SUPABASE_URL: 'https://yaqpliuzjekqrssihtrk.supabase.co',
   
   // ⚠️ VEJA NA ENGRENAGEM > "CHAVES DE API" E COLE A SUA CHAVE "anon public" AQUI DENTRO DAS ASPAS:
   SUPABASE_ANON_KEY: 'sb_publishable_PfBJna_UN_pqaOTBnbarOQ_wfF6rHTU',
