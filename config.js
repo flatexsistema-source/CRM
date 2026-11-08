@@ -20,7 +20,7 @@ window.CRM_CONFIG = {
   SUPABASE_URL: 'https://supabase.co',
   
   // ⚠️ VEJA NA ENGRENAGEM > "CHAVES DE API" E COLE A SUA CHAVE "anon public" AQUI DENTRO DAS ASPAS:
-  SUPABASE_ANON_KEY: 'COLE_AQUI_A_SUA_ANON_PUBLIC',
+  SUPABASE_ANON_KEY: 'sb_publishable_PfBJna_UN_pqaOTBnbarOQ_wfF6rHTU',
 
   // Planos mostrados enquanto o sistema ainda não está ligado ao Supabase.
   PLANOS_PADRAO: [
